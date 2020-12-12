@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구구단</title>
+</head>
+
+<body>
+    <!--<script async src="main.js"></script>
+    <div class="game-container">
+        <div class="question">
+            
+        </div>
+    </div>
+        <input type="number" name="user-answer" id="user-answer">
+        <p id="result">확인</p>--->
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script type="text/babel">
+
+        //랜덤 숫자값 내기 ( 1~9의 값)
+        // function getRandomInt(min, max) {
+        //     min = Math.ceil(min); // 정수 보장
+        //     max = Math.floor(max);// 정수보장
+        //     return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
+        // }
+
+        function Question(props) {
+            return (
+                <div>
+                    {props.first} x {props.second} = ?
+                </div>
+            )
+        }
+
+        //prop과 state의 차이
+        class UserInput extends React.Component {
+            render() {
+                return (
+                    <input
+                        type="number"
+                        value={this.props.value}
+                        onKeyDown={this.props.onKeyDown}
+                        onChange={this.props.onChange}
+                    />
+                );
+            }
+        }
+
+        class Game extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    first: this.getRandomInt(1, 10),
+                    second: this.getRandomInt(1, 10),
+                    useranswer: null,
+                    iscorrect: false,
+                    value: "",
+                }
+            }
+
+            getRandomInt(min, max) {
+                min = Math.ceil(min); // 정수 보장
+                max = Math.floor(max);// 정수보장
+                return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
+            }
+
+            renderQuestion() {
+                return (<Question first={this.state.first} second={this.state.second} />)
+            }
+
+            // arrow function만 쓸 수 있음
+            //따로 빼낸 이유. setState할 때마다 새로운 함수가 새로 생성됨
+            onKeyDown = (e) => {
+                if (e.key === 'Enter') {
+                    let answer = (this.state.first) * (this.state.second);
+                    let useranswer = parseInt(this.state.value);
+
+                    console.log("useranswer", useranswer)
+                    if (useranswer === answer) {
+                        this.setState((prevState) => { 
+                            return{
+                                first: this.getRandomInt(1, 10),
+                                second: this.getRandomInt(1, 10),
+                                useranswer: prevState.value,
+                                iscorrect: "true",
+                                value: '',  
+                            }
+                        });
+                        //setStae 비동기 -> 이전 스테이트의 값으로 현재값을 만들 때에는 return 을 쓰는 것이 좋다. 
+                        //functional setState
+                        // this.setState((prevstate)=> {
+                        //     return {
+                        //         first: ~,
+                        //         second: ~,
+                        //         useranswer: prevstate.value,
+                        //         iscorrect: ~,
+                        //         value: ''
+                        //     }
+                        // }) 
+                        console.log("true");
+                    }else {
+                        this.setState({
+                            useranswer: useranswer,
+                            iscorrect: "false",
+                            value: '',
+                        })
+                        console.log("false");
+                    }
+                    //document.querySelector('input').value = "";
+                }
+            }
+
+            onChange = (e) => {
+                this.setState({ value: e.target.value });
+            }
+
+            renderUserInput() {
+                return (<UserInput
+                    onKeyDown={(e) => this.onKeyDown(e)}
+                    onChange={(e) => this.onChange(e)}
+                    value={this.state.value} />)
+            }
+
+            render() { //setState를 할 때마다 render를 호출
+                return (
+                    //dom에 직접 접근하고 싶을 때 => ref를 사용
+                    <React.Fragment>
+                        <div>{this.renderQuestion()}</div>
+                        <div>{this.renderUserInput()}</div>
+                        <div>{this.state.iscorrect}: {this.state.useranswer}</div>
+                    </React.Fragment>
+                )
+            }
+        }
+
+        ReactDOM.render(<Game />, document.querySelector('#root'));
+    </script>
+    
+</body>
+
+</html>

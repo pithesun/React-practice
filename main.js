@@ -2,7 +2,7 @@
 DisplayQuestion();
 
 function setEventListener(answer){
-    let userInput = document.querySelector('#user-answer');
+    let userInput = document.querySelector('#game-container');
     let result = document.querySelector('#result');
     userInput.addEventListener('change', function callback(e){
         console.log(typeof e.target.value, typeof answer);
