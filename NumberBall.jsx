@@ -1,4 +1,5 @@
 const React = require('react');
+const Try = require('./Try');
 
 //랜덤 숫자값 내기 ( 1~9의 값), 중복 없이
 function getRandomInt(min, max) {
@@ -62,6 +63,7 @@ class NumberBall extends React.Component{
             let prevcount = prevstate.history.length-1;
             console.log("prevcount ", prevcount);
             return {
+                value: '',
                 result: result,
                 history: prevstate.history.concat({
                     tryCount: prevcount + 1,
@@ -70,29 +72,22 @@ class NumberBall extends React.Component{
                 }),
             }
         })
-        console.log("count", this.state.history.tryCount);
     }
     render(){
         const tries = this.state.history;
         return (
             <>
                 <form onSubmit={(e)=> this.onSubmitForm(e)}>
-                    <input
-                        onChange={(e) => this.onChange(e)}/>
+                    <input value={this.state.value} 
+                    onChange={(e) => this.onChange(e)}/>
                     <button>입력!</button>
                 </form>
                 <ul>
                     {tries.map((v,i) => {
                         return(
-                            
-                            <li key={i}> {v.tryCount}차 시도: {v.results[0]} 스트라이크 {v.results[1]} 볼 
-                                <span>{v.tryCount === 10 ? " 게임 완료": null}</span>
-                                <span>{v.results[0] === 4 ? " 성공": null}</span>
-                            </li>
-                            
+                            <Try tryCount={v.tryCount} results={v.results} i={i} />
                         );
                     })}
-
                 </ul>
             </>
         )
