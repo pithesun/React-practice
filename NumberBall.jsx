@@ -27,6 +27,11 @@ class NumberBall extends React.Component{
         value: '',
         answer: saveRandomInt(4),
         result: '',
+        history: [{
+            results: Array(2).fill(null),
+            userInput: null,
+            tryCount: 0,
+        }]
     }
 
     //퍼블릭 클래스 필드 문법  @babel/plugin-proposal-class-properties
@@ -39,10 +44,10 @@ class NumberBall extends React.Component{
 
         let result = new Array(2).fill(0);
         let answer = this.state.answer;
-        console.log(answer);
+        //console.log(answer);
 
         //check answer
-        console.log("value", userInput);
+        //console.log("value", userInput);
         answer.forEach((answerValue, answerIndex) => {
             Array.from(userInput).forEach((inputValue, inputIndex) => {
                 console.log(answerValue, inputValue);
@@ -53,11 +58,22 @@ class NumberBall extends React.Component{
             })
         })
 
-        this.setState({
-            result: result
+        this.setState((prevstate) => {
+            let prevcount = prevstate.history.length-1;
+            console.log("prevcount ", prevcount);
+            return {
+                result: result,
+                history: prevstate.history.concat({
+                    tryCount: prevcount + 1,
+                    results: result,
+                    userInput: userInput
+                }),
+            }
         })
+        console.log("count", this.state.history.tryCount);
     }
     render(){
+        const tries = this.state.history;
         return (
             <>
                 <form onSubmit={(e)=> this.onSubmitForm(e)}>
@@ -65,7 +81,19 @@ class NumberBall extends React.Component{
                         onChange={(e) => this.onChange(e)}/>
                     <button>입력!</button>
                 </form>
-                <span>{this.state.result[0]} 스트라이크 {this.state.result[1]} 볼 </span>
+                <ul>
+                    {tries.map((v,i) => {
+                        return(
+                            
+                            <li key={i}> {v.tryCount}차 시도: {v.results[0]} 스트라이크 {v.results[1]} 볼 
+                                <span>{v.tryCount === 10 ? " 게임 완료": null}</span>
+                                <span>{v.results[0] === 4 ? " 성공": null}</span>
+                            </li>
+                            
+                        );
+                    })}
+
+                </ul>
             </>
         )
     }
