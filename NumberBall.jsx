@@ -1,6 +1,6 @@
 const React = require('react');
 const Try = require('./Try');
-
+const { useState } = require('react');
 //랜덤 숫자값 내기 ( 1~9의 값), 중복 없이
 function getRandomInt(min, max) {
     min = Math.ceil(min); // 정수 보장
@@ -20,78 +20,138 @@ function saveRandomInt(num){
         
         array[i] = newInt;
     }
-    console.log("array", array);
+    //console.log("array", array);
     return array;
 }
-class NumberBall extends React.Component{
-    state = {
-        value: '',
-        answer: saveRandomInt(4),
-        result: '',
-        history: [{
-            results: Array(2).fill(null),
-            userInput: null,
-            tryCount: 0,
-        }]
+
+const NumberBall = () => {
+    const [value, setvalue] = useState('')
+    const [answer, setanswer] = useState(saveRandomInt(4)) //문제점 : 계속 호출함
+    const [result, setresult] = useState('')
+    const [history, sethistory] = useState( [{
+        results: Array(2).fill(null),
+        userInput: null,
+        tryCount: 0,
+    }])
+    console.log("answer", answer);
+    const onChange = (e) => { setvalue(e.target.value) }
+    const onSubmitForm = (e) => {
+                e.preventDefault();
+                let userInput = value;
+        
+                let curresult = new Array(2).fill(0);
+                let curanswer = answer;
+                //console.log(answer);
+        
+                //check answer
+                //console.log("value", userInput);
+                curanswer.forEach((answerValue, answerIndex) => {
+                    Array.from(userInput).forEach((inputValue, inputIndex) => {
+                        if( answerValue === inputValue*1){
+                            if( answerIndex === inputIndex) curresult[0] += 1;
+                            else{ curresult[1] +=1; }
+                        }
+                    })
+                })
+                setvalue('');
+                setresult(curresult);
+                sethistory((prevhistory) => {
+                    let prevcount= prevhistory.length;
+                    return (
+                        prevhistory.concat({
+                            tryCount: prevcount,
+                            results: curresult,
+                            userInput: userInput
+                        })
+                    )
+                })
+            console.log("history", history, "answer", answer);
     }
-
-    //퍼블릭 클래스 필드 문법  @babel/plugin-proposal-class-properties
-    onChange = (e) => {
-        this.setState({ value: e.target.value });
-    }
-    onSubmitForm = (e) => {
-        e.preventDefault();
-        let userInput = this.state.value;
-
-        let result = new Array(2).fill(0);
-        let answer = this.state.answer;
-        //console.log(answer);
-
-        //check answer
-        //console.log("value", userInput);
-        answer.forEach((answerValue, answerIndex) => {
-            Array.from(userInput).forEach((inputValue, inputIndex) => {
-                console.log(answerValue, inputValue);
-                if( answerValue === inputValue*1){
-                    if( answerIndex === inputIndex) result[0] += 1;
-                    else{ result[1] +=1; }
-                }
-            })
-        })
-
-        this.setState((prevstate) => {
-            let prevcount = prevstate.history.length-1;
-            console.log("prevcount ", prevcount);
-            return {
-                value: '',
-                result: result,
-                history: prevstate.history.concat({
-                    tryCount: prevcount + 1,
-                    results: result,
-                    userInput: userInput
-                }),
-            }
-        })
-    }
-    render(){
-        const tries = this.state.history;
-        return (
-            <>
-                <form onSubmit={(e)=> this.onSubmitForm(e)}>
-                    <input value={this.state.value} 
-                    onChange={(e) => this.onChange(e)}/>
+    return (
+        <>
+            <form onSubmit={onSubmitForm}>                     
+                    <input onChange={onChange}/>
                     <button>입력!</button>
-                </form>
-                <ul>
-                    {tries.map((v,i) => {
-                        return(
-                            <Try tryCount={v.tryCount} results={v.results} i={i} />
-                        );
-                    })}
-                </ul>
-            </>
-        )
-    }
+            </form>
+            <ul>
+                {history.map((v,i) => {
+                    return(
+                        <Try tryCount={v.tryCount} results={v.results} i={i} userInput={v.userInput} />
+                    );
+                })}
+            </ul>
+        </>
+    )
 }
+// class NumberBall extends React.Component{
+//     state = {
+//         value: '',
+//         answer: saveRandomInt(4),
+//         result: '',
+//         history: [{
+//             results: Array(2).fill(null),
+//             userInput: null,
+//             tryCount: 0,
+//         }]
+//     }
+
+//     //퍼블릭 클래스 필드 문법  @babel/plugin-proposal-class-properties
+//     onChange = (e) => {
+//         this.setState({ value: e.target.value });
+//     }
+//     onSubmitForm = (e) => {
+//         e.preventDefault();
+//         let userInput = this.state.value;
+
+//         let result = new Array(2).fill(0);
+//         let answer = this.state.answer;
+//         //console.log(answer);
+
+//         //check answer
+//         //console.log("value", userInput);
+//         answer.forEach((answerValue, answerIndex) => {
+//             Array.from(userInput).forEach((inputValue, inputIndex) => {
+//                 console.log(answerValue, inputValue);
+//                 if( answerValue === inputValue*1){
+//                     if( answerIndex === inputIndex) result[0] += 1;
+//                     else{ result[1] +=1; }
+//                 }
+//             })
+//         })
+
+//         this.setState((prevstate) => {
+//             let prevcount = prevstate.history.length-1;
+//             console.log("prevcount ", prevcount);
+//             return {
+//                 value: '',
+//                 result: result,
+//                 history: prevstate.history.concat({
+//                     tryCount: prevcount + 1,
+//                     results: result,
+//                     userInput: userInput
+//                 }),
+//             }
+//         })
+//     }
+//     render(){
+//         const tries = this.state.history;
+//         return (
+//             <>
+//                 <form onSubmit={(e)=> this.onSubmitForm(e)}>
+//                     <input value={this.state.value} 
+//                     onChange={(e) => this.onChange(e)}/>
+//                     <button>입력!</button>
+//                 </form>
+//                 <ul>
+//                     {tries.map((v,i) => {
+//                         return(
+//                             <Try tryCount={v.tryCount} results={v.results} i={i} />
+//                         );
+//                     })}
+//                 </ul>
+//             </>
+//         )
+//     }
+// }
 
 module.exports = NumberBall;
