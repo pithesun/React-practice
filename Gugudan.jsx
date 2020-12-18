@@ -1,5 +1,13 @@
 const React = require('react'); // 노드의 모듈 시스템을 사용한 require
 //소문자 react는 안 됨
+//노드의 모듈 시스템 -> require
+//exports되는 게 객체나 배열이면 구조 분해할 수 있다. 
+// { } 
+//export default는 한 번만 
+
+//main
+//숫자 4자리 중복 없이 랜덤생성
+//사용자 입력을 받아와서 답과 비교 -> 숫자만 맞으면 볼, 자리까지 받으면 스트라이크
 
 class Gugudan extends React.Component {
 
