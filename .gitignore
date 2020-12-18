@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 *.code-workspace
 node_modules
+=======
+.vscode
+>>>>>>> wordrelay/main
