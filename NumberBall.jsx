@@ -1,6 +1,6 @@
 const React = require('react');
 const Try = require('./Try');
-const { useState } = require('react');
+const { useState , useRef} = require('react');
 //랜덤 숫자값 내기 ( 1~9의 값), 중복 없이
 function getRandomInt(min, max) {
     min = Math.ceil(min); // 정수 보장
@@ -33,6 +33,8 @@ const NumberBall = () => {
         userInput: null,
         tryCount: 0,
     }])
+    const inputRef = useRef(null);
+
     console.log("answer", answer);
     const onChange = (e) => { setvalue(e.target.value) }
     const onSubmitForm = (e) => {
@@ -65,12 +67,13 @@ const NumberBall = () => {
                         })
                     )
                 })
+                inputRef.current.focus();
             console.log("history", history, "answer", answer);
     }
     return (
         <>
             <form onSubmit={onSubmitForm}>                     
-                    <input onChange={onChange}/>
+                    <input onChange={onChange} ref={inputRef} value={value}/>
                     <button>입력!</button>
             </form>
             <ul>

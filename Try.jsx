@@ -1,6 +1,6 @@
 const React = require('react');
 
-class Try extends React.Component{
+class Try extends React.PureComponent{ //purecomponent: 변화하는 state만 rendering => 성능향상 // hooks는 memo
     render(){
         return (
             <li key={this.props.i}> 
