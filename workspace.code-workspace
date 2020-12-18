@@ -1,0 +1,13 @@
+{
+  "folders": [
+	{
+		"path": "..\\99"
+	},
+	{
+		"path": "."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "WordRelay"
+  }
+}
